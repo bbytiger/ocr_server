@@ -5,6 +5,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 import requests, os, base64, json
+import qrcode
 from PIL import Image, ImageFilter
 from io import StringIO
 import pytesseract
@@ -54,3 +55,20 @@ def pdf(request):
       os.remove(tempfile)
       os.remove(returnfile)
     return response
+
+  @api_view(['GET', 'POST'])
+  def qr(request):
+    if request.method == 'GET':
+      return Response({"message": "Hello, you have reached the QR Code endpoint! Issue a POST request to this endpoint and it will return a QR Code!"})
+    elif request.method == "POST":
+      res = request.data
+      dat = res['url']
+      returnfile = "qr.png"
+      qr = qrcode.QRCode(
+        version=1,
+        box_size=10,
+        border=5)
+      img = qr.make_image(fill='black', back_color='white')
+      response = HttpResponse(img, content_type='image/png')
+      response['Content-Disposition'] = 'attachment; filename="' + returnfile + '"'
+      return response
