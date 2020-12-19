@@ -19,7 +19,9 @@ from ocr_framework import views as ocr_views
 
 
 urlpatterns = [
+    path('', ocr_views.home),
     path('text/', ocr_views.text),
     path('pdf/', ocr_views.pdf),
+    path('qr/', ocr_views.qr),
     path('admin/', admin.site.urls),
 ]

@@ -10,10 +10,14 @@ from PIL import Image, ImageFilter
 from io import StringIO
 import pytesseract
 
+@api_view(['GET'])
+def home(request):
+  return Response({"message": "Hello, you have reached the OCR Server! There are 3 endpoints: text, pdf, and qr"})
+
 @api_view(['GET','POST'])
 def text(request):
   if request.method == 'GET':
-    return Response({"message": "Hello, you have reached the text endpoint! Issue a POST request to this endpoint and it will convert your image to text!"})
+    return Response({"message": "Hello, you have reached the text endpoint! Issue a POST request to convert your image to text!"})
   elif request.method == 'POST':
     res = request.data
     b64_im = json.loads(res)['data']
@@ -34,7 +38,7 @@ def text(request):
 @api_view(['GET','POST']) 
 def pdf(request):
   if request.method == 'GET':
-    return Response({"message": "Hello, you have reached the pdf endpoint! Issue a POST request to this endpoint and it will return a searchable .pdf file!"})
+    return Response({"message": "Hello, you have reached the pdf endpoint! Issue a POST request to return a searchable .pdf file!"})
   elif request.method == 'POST':
     res = request.data
     b64_im = json.loads(res)['data']
@@ -56,19 +60,19 @@ def pdf(request):
       os.remove(returnfile)
     return response
 
-  @api_view(['GET', 'POST'])
-  def qr(request):
-    if request.method == 'GET':
-      return Response({"message": "Hello, you have reached the QR Code endpoint! Issue a POST request to this endpoint and it will return a QR Code!"})
-    elif request.method == "POST":
-      res = request.data
-      dat = res['url']
-      returnfile = "qr.png"
-      qr = qrcode.QRCode(
-        version=1,
-        box_size=10,
-        border=5)
-      img = qr.make_image(fill='black', back_color='white')
-      response = HttpResponse(img, content_type='image/png')
-      response['Content-Disposition'] = 'attachment; filename="' + returnfile + '"'
-      return response
+@api_view(['GET', 'POST'])
+def qr(request):
+  if request.method == 'GET':
+    return Response({"message": "Hello, you have reached the QR Code endpoint! Issue a POST request to return a QR Code!"})
+  elif request.method == "POST":
+    res = request.data
+    dat = res['url']
+    returnfile = "qr.png"
+    qr = qrcode.QRCode(
+      version=1,
+      box_size=10,
+      border=5)
+    img = qr.make_image(fill='black', back_color='white')
+    response = HttpResponse(img, content_type='image/png')
+    response['Content-Disposition'] = 'attachment; filename="' + returnfile + '"'
+    return response
